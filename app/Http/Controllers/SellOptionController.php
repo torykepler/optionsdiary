@@ -34,6 +34,19 @@ class SellOptionController extends Controller
     }
 
     /**
+     * Delete sell option from the database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    public function deleteSellOption(Request $request): bool
+    {
+        return SellOption::where('id', $request->id)
+            ->where('user_id', $request->user()->id)
+            ->delete();
+    }
+
+    /**
      * Store a new sell option in the database.
      *
      * @param  \Illuminate\Http\Request  $request

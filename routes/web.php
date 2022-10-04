@@ -19,7 +19,8 @@ Route::get('/', function () {
 
 Route::get('/diary', [App\Http\Controllers\DiaryController::class, 'view'])->name('diary')->middleware('auth');
 
-Route::post('/add-sale', [App\Http\Controllers\DiaryController::class, 'addSale'])->name('add-sale')->middleware('auth');
+Route::post('/selloption/add', [App\Http\Controllers\DiaryController::class, 'addSale'])->name('add-sale')->middleware('auth');
+Route::post('/selloption/delete', [App\Http\Controllers\DiaryController::class, 'deleteSale'])->name('delete-sale')->middleware('auth');
 
 Auth::routes();
 

@@ -1,7 +1,7 @@
 $(document).ready(function (){
     $("#add-sale").on("click", function()
     {
-        $("#add-modal").show();
+        $("#add-modal").addClass('d-flex');
     });
 
     $("#add-sale-form").on("submit", function(e)
@@ -22,3 +22,26 @@ $(document).ready(function (){
         });
     });
 });
+
+function removeSellOption(id, route, csrf)
+{
+    console.log("removeSellOption called for id: ", id);
+
+    const data = {
+        'id' : id,
+        '_token' : csrf
+    }
+
+    $.ajax({
+        url : route,
+        type: "POST",
+        data: data,
+        success: function (data) {
+            console.log(data);
+            location.reload();
+        },
+        error: function (jXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}

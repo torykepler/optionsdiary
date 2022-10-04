@@ -18,14 +18,26 @@ class DiaryController extends Controller
 
     /**
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @param  Request $request
+     * @return bool
      */
-    public function addSale(Request $request)
+    public function addSale(Request $request) : bool
     {
         $input = $request->all();
 
         $result = (new SellOptionController())->store($request);
+
+        return $result;
+    }
+
+    /**
+     *
+     * @param  Request $request
+     * @return bool
+     */
+    public function deleteSale(Request $request) : bool
+    {
+        $result = (new SellOptionController())->deleteSellOption($request);
 
         return $result;
     }

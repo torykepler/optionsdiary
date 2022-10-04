@@ -20,10 +20,11 @@
                 <th scope="col">Fees</th>
                 <th scope="col">Exit Price</th>
                 <th scope="col">Qty</th>
+                <th></th>
             </tr>
         </thead>
         @foreach($sellOptions as $sellOption)
-            <tr>
+            <tr data-id="{{ $sellOption->id }}">
                 <td>{{ $sellOption->ticker }}</td>
                 <td>{{ $sellOption->type }}</td>
                 <td>{{ $sellOption->open_date }}</td>
@@ -34,15 +35,14 @@
                 <td>{{ $sellOption->fees }}</td>
                 <td>{{ $sellOption->exit_price }}</td>
                 <td>{{ $sellOption->quantity }}</td>
+                <td><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
             </tr>
-
-
         @endforeach
     </table>
     <button class="btn btn-dark" id="add-sale">Add Sale</button>
 </div>
 
-    <div id="add-modal" class="d-flex justify-content-center">
+    <div id="add-modal" class="justify-content-center">
         <form id="add-sale-form" action=" {{route('add-sale')}}">
             @csrf
             <div class="row mb-3">
