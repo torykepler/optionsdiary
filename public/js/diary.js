@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedFunction,JSUnresolvedVariable
+
 $(document).ready(function (){
     $("#add-sale").on("click", function()
     {

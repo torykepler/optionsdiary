@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SellOption;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use stdClass;
 
 class DiaryController extends Controller
 {
@@ -17,58 +23,56 @@ class DiaryController extends Controller
     }
 
     /**
+     * Add an option sale
      *
      * @param  Request $request
      * @return bool
      */
     public function addSale(Request $request) : bool
     {
-        $input = $request->all();
-
-        $result = (new SellOptionController())->store($request);
-
-        return $result;
+        return (new SellOptionController())->store($request);
     }
 
     /**
+     * Delete an existing option sale
      *
      * @param  Request $request
      * @return bool
      */
     public function deleteSale(Request $request) : bool
     {
-        $result = (new SellOptionController())->deleteSellOption($request);
-
-        return $result;
+          return (new SellOptionController())->deleteSellOption($request);
     }
 
     /**
+     * Get all sell options for the
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return
+     * @param Request $request
+     * @return SellOption[]
      */
     public function getSellOptions(Request $request)
     {
-        $result = (new SellOptionController())->getSellOptions($request);
-
-        return $result;
+        return (new SellOptionController())->getSellOptions($request);
     }
 
     /**
+     * Get all sell options grouped by the ticker
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return
+     * @param Request $request
+     * @return Collection
      */
     public function getSellOptionsGroupedByTicker(Request $request)
     {
-        $result = (new SellOptionController())->getSellOptionsGroupedByTicker($request);
-
-        return $result;
+        return (new SellOptionController())->getSellOptionsGroupedByTicker($request);
     }
 
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
     public function view(Request $request)
     {
-        $data = new \stdClass();
+        $data = new stdClass();
 
         $sellOptions = $this->getSellOptions($request);
         $sellOptionsGroupedByTicker = $this->getSellOptionsGroupedByTicker($request);
@@ -81,9 +85,14 @@ class DiaryController extends Controller
         return view('diary')->with('data', $data);
     }
 
-    private function calculateSaleTotals(\Illuminate\Database\Eloquent\Collection $sellOptions)
+    /**
+     * Calculates the total premium, total profit, total fees, total quantity and total exit price
+     * @param \Illuminate\Database\Eloquent\Collection|SellOption[] $sellOptions
+     * @return stdClass
+     */
+    private function calculateSaleTotals(\Illuminate\Database\Eloquent\Collection|array $sellOptions)
     {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->totalPremium = 0;
         $data->totalProfit = 0;
         $data->totalFees = 0;
