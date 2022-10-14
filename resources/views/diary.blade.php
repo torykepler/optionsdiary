@@ -1,44 +1,73 @@
 @extends('layouts.app')
 
 @section('content')
+    <!--suppress HtmlUnknownTarget -->
     <head>
         <script type="text/javascript" src="js/diary.js"></script>
         <link href="css/diary.css" rel="stylesheet">
         <title>Options Diary</title>
     </head>
 <div class="container">
-    <table class="table" id="diary-table">
-        <thead>
+    <div class="row">
+        <label class="col-xs-3 col-sm-3 col-md-2 col-lg-2 col-xl-1">Total Profit: </label>
+        <span class="col-xs-3 col-sm-2 col-md-1">{{ str_replace("$-", "-$", "$" . number_format($data->totals->totalProfit, 2)) }} </span>
+        <div class="col-xs-3 col-sm-4 col-md-8 "></div>
+        <div class ="col-xs-3 col-sm-2 col-md-1"><button type="button" class="btn btn-primary" id="diary-group-btn" data-status="hidden">Group</button></div>
+    </div>
+    <div class="table-responsive" id="table-div">
+        <table class="table table-bordered" id="diary-table">
+            <thead>
+                <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Open Date</th>
+                    <th scope="col">Exp Date</th>
+                    <th scope="col">Close Date</th>
+                    <th scope="col">Strike</th>
+                    <th scope="col">Premium</th>
+                    <th scope="col">Fees</th>
+                    <th scope="col">Exit Price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">P&L</th>
+                    <th></th>
+                </tr>
+            </thead>
+            @foreach($data->sellOptions as $sellOption)
+                <tr data-id="{{ $sellOption->id }}">
+                    <td>{{ $sellOption->ticker }}</td>
+                    <td>{{ $sellOption->type }}</td>
+                    <td>{{ $sellOption->open_date }}</td>
+                    <td>{{ $sellOption->exp_date }}</td>
+                    <td>{{ $sellOption->close_date }}</td>
+                    <td>{{ $sellOption->strike }}</td>
+                    <td>{{ $sellOption->premium }}</td>
+                    <td>{{ $sellOption->fees }}</td>
+                    <td>{{ $sellOption->exit_price }}</td>
+                    <td>{{ $sellOption->quantity }}</td>
+                    <td>{{ str_replace("$-", "-$", "$" . number_format($sellOption->profit, 2)) }}</td>
+                    <td class="action-buttons"><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
+                </tr>
+            @endforeach
+        </table>
+        <table class="table table-bordered" id="diary-table-grouped-by-ticker">
+            <thead>
             <tr>
                 <th scope="col">Ticker</th>
-                <th scope="col">Type</th>
-                <th scope="col">Open Date</th>
-                <th scope="col">Exp Date</th>
-                <th scope="col">Close Date</th>
-                <th scope="col">Strike</th>
-                <th scope="col">Premium</th>
-                <th scope="col">Fees</th>
-                <th scope="col">Exit Price</th>
                 <th scope="col">Qty</th>
+                <th scope="col">P&L</th>
                 <th></th>
             </tr>
-        </thead>
-        @foreach($sellOptions as $sellOption)
-            <tr data-id="{{ $sellOption->id }}">
-                <td>{{ $sellOption->ticker }}</td>
-                <td>{{ $sellOption->type }}</td>
-                <td>{{ $sellOption->open_date }}</td>
-                <td>{{ $sellOption->exp_date }}</td>
-                <td>{{ $sellOption->close_date }}</td>
-                <td>{{ $sellOption->strike }}</td>
-                <td>{{ $sellOption->premium }}</td>
-                <td>{{ $sellOption->fees }}</td>
-                <td>{{ $sellOption->exit_price }}</td>
-                <td>{{ $sellOption->quantity }}</td>
-                <td><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
-            </tr>
-        @endforeach
-    </table>
+            </thead>
+            @foreach($data->sellOptionsGroupedByTicker as $sellOption)
+                <tr data-id="{{ $sellOption->id }}">
+                    <td>{{ $sellOption->ticker }}</td>
+                    <td>{{ $sellOption->quantity }}</td>
+                    <td>{{ str_replace("$-", "-$", "$" . number_format($sellOption->profit, 2)) }}</td>
+                    <td class="action-buttons"><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
     <button class="btn btn-dark" id="add-sale">Add Sale</button>
 </div>
 

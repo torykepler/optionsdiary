@@ -54,10 +54,51 @@ class DiaryController extends Controller
         return $result;
     }
 
+    /**
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return
+     */
+    public function getSellOptionsGroupedByTicker(Request $request)
+    {
+        $result = (new SellOptionController())->getSellOptionsGroupedByTicker($request);
+
+        return $result;
+    }
+
     public function view(Request $request)
     {
-        $sellOptions = $this->getSellOptions($request);
+        $data = new \stdClass();
 
-        return view('diary')->with('sellOptions', $sellOptions);
+        $sellOptions = $this->getSellOptions($request);
+        $sellOptionsGroupedByTicker = $this->getSellOptionsGroupedByTicker($request);
+        $totals = $this->calculateSaleTotals($sellOptions);
+
+        $data->sellOptions = $sellOptions;
+        $data->sellOptionsGroupedByTicker = $sellOptionsGroupedByTicker;
+        $data->totals = $totals;
+
+        return view('diary')->with('data', $data);
+    }
+
+    private function calculateSaleTotals(\Illuminate\Database\Eloquent\Collection $sellOptions)
+    {
+        $data = new \stdClass();
+        $data->totalPremium = 0;
+        $data->totalProfit = 0;
+        $data->totalFees = 0;
+        $data->totalQuantity = 0;
+        $data->totalExitPrice = 0;
+
+        foreach($sellOptions as $sellOption)
+        {
+            $data->totalPremium += $sellOption->premium * $sellOption->quantity;
+            $data->totalProfit += $sellOption->profit;
+            $data->totalFees += $sellOption->fees;
+            $data->totalQuantity += $sellOption->quantity;
+            $data->totalExitPrice += $sellOption->exit_price;
+        }
+
+        return $data;
     }
 }
