@@ -45,7 +45,7 @@
                     <td>{{ $sellOption->exit_price }}</td>
                     <td>{{ $sellOption->quantity }}</td>
                     <td>{{ str_replace("$-", "-$", "$" . number_format($sellOption->profit, 2)) }}</td>
-                    <td class="action-buttons"><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
+                    <td class="action-buttons"><button class="btn" onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><i class="fa-solid fa-xmark"></i></button></td>
                 </tr>
             @endforeach
         </table>
@@ -55,7 +55,6 @@
                 <th scope="col">Ticker</th>
                 <th scope="col">Qty</th>
                 <th scope="col">P&L</th>
-                <th></th>
             </tr>
             </thead>
             @foreach($data->sellOptionsGroupedByTicker as $sellOption)
@@ -63,93 +62,105 @@
                     <td>{{ $sellOption->ticker }}</td>
                     <td>{{ $sellOption->quantity }}</td>
                     <td>{{ str_replace("$-", "-$", "$" . number_format($sellOption->profit, 2)) }}</td>
-                    <td class="action-buttons"><button onclick="removeSellOption({{ $sellOption->id }}, '{{ route('delete-sale') }}', '{{ csrf_token() }}')"><span class="alert-danger glyphicon glyphicon-minus"></span></button></td>
                 </tr>
             @endforeach
         </table>
     </div>
-    <button class="btn btn-dark" id="add-sale">Add Sale</button>
+    <button class="btn btn-dark" id="add-sale" data-bs-toggle="modal" data-bs-target="#addSaleModal">Add Sale</button>
 </div>
 
-    <div id="add-modal" class="justify-content-center">
-        <form id="add-sale-form" action=" {{route('add-sale')}}">
-            @csrf
-            <div class="row mb-3">
-                <label for="ticker" class="col-md-2 col-form-label text-md-end">{{ __('Ticker') }}</label>
-
-                <div class="col-md-4">
-                    <input id="ticker" type="text" class="form-control" name="ticker" required autofocus>
+    <!-- Add Modal -->
+    <div class="modal fade" id="addSaleModal" tabindex="-1" role="dialog" aria-labelledby="addSaleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSaleModalLabel">Add Option Sale</h5>
+                    <i class="fa-solid fa-xmark close" data-bs-dismiss="modal"></i>
                 </div>
+                <div class="modal-body">
+                    <div id="add-modal" class="justify-content-center">
+                        <form id="add-sale-form" action=" {{route('add-sale')}}">
+                            @csrf
+                            <div class="row mb-3">
+                                <label for="ticker" class="col-md-2 col-form-label text-md-end">{{ __('Ticker') }}</label>
 
-                <label for="premium" class="col-md-2 col-form-label text-md-end">{{ __('Premium') }}</label>
+                                <div class="col-md-4">
+                                    <input id="ticker" type="text" class="form-control" name="ticker" required autofocus>
+                                </div>
 
-                <div class="col-md-4">
-                    <input id="premium" type="number" step="0.01" class="form-control" name="premium" required>
+                                <label for="premium" class="col-md-2 col-form-label text-md-end">{{ __('Premium') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="premium" type="number" step="0.01" class="form-control" name="premium" required>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label for="type" class="col-md-2 col-form-label text-md-end">{{ __('Type') }}</label>
+
+                                <div class="col-md-4">
+                                    <select id="type" name="type" class="form-select">
+                                        <option value="call">Call</option>
+                                        <option value="put">Put</option>
+                                    </select>
+                                </div>
+
+                                <label for="strike" class="col-md-2 col-form-label text-md-end">{{ __('Strike') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="strike" type="number" step="0.01" class="form-control" name="strike" required>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label for="open_date" class="col-md-2 col-form-label text-md-end">{{ __('Open Date') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="open_date" type="date" class="form-control" name="open_date" required>
+                                </div>
+
+                                <label for="exit_price" class="col-md-2 col-form-label text-md-end">{{ __('Exit Price') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="exit_price" type="number" step="0.01" class="form-control" name="exit_price">
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label for="exp_date" class="col-md-2 col-form-label text-md-end">{{ __('Exp Date') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="exp_date" type="date" class="form-control" name="exp_date" required>
+                                </div>
+
+                                <label for="fees" class="col-md-2 col-form-label text-md-end">{{ __('Fees') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="fees" type="number" step="0.01" class="form-control" name="fees" value="0.00" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="close_date" class="col-md-2 col-form-label text-md-end">{{ __('Close Date') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="close_date" type="date" class="form-control" name="close_date">
+                                </div>
+
+
+
+                                <label for="quantity" class="col-md-2 col-form-label text-md-end">{{ __('Quantity') }}</label>
+
+                                <div class="col-md-4">
+                                    <input id="quantity" type="number" class="form-control" name="quantity" value="1" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <button type="submit" id="add-sale-submit" class="btn btn-primary col-md-12">Submit</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
             </div>
-            <div class="row mb-3">
-                <label for="type" class="col-md-2 col-form-label text-md-end">{{ __('Type') }}</label>
-
-                <div class="col-md-4">
-                    <select id="type" name="type" class="form-select">
-                        <option value="call">Call</option>
-                        <option value="put">Put</option>
-                    </select>
-                </div>
-
-                <label for="strike" class="col-md-2 col-form-label text-md-end">{{ __('Strike') }}</label>
-
-                <div class="col-md-4">
-                    <input id="strike" type="number" step="0.01" class="form-control" name="strike" required>
-                </div>
-
-            </div>
-            <div class="row mb-3">
-                <label for="open_date" class="col-md-2 col-form-label text-md-end">{{ __('Open Date') }}</label>
-
-                <div class="col-md-4">
-                    <input id="open_date" type="date" class="form-control" name="open_date" required>
-                </div>
-
-                <label for="exit_price" class="col-md-2 col-form-label text-md-end">{{ __('Exit Price') }}</label>
-
-                <div class="col-md-4">
-                    <input id="exit_price" type="number" step="0.01" class="form-control" name="exit_price">
-                </div>
-
-            </div>
-            <div class="row mb-3">
-                <label for="exp_date" class="col-md-2 col-form-label text-md-end">{{ __('Exp Date') }}</label>
-
-                <div class="col-md-4">
-                    <input id="exp_date" type="date" class="form-control" name="exp_date" required>
-                </div>
-
-                <label for="fees" class="col-md-2 col-form-label text-md-end">{{ __('Fees') }}</label>
-
-                <div class="col-md-4">
-                    <input id="fees" type="number" step="0.01" class="form-control" name="fees" value="0.00" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label for="close_date" class="col-md-2 col-form-label text-md-end">{{ __('Close Date') }}</label>
-
-                <div class="col-md-4">
-                    <input id="close_date" type="date" class="form-control" name="close_date">
-                </div>
-
-
-
-                <label for="quantity" class="col-md-2 col-form-label text-md-end">{{ __('Quantity') }}</label>
-
-                <div class="col-md-4">
-                    <input id="quantity" type="number" class="form-control" name="quantity" value="1" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <button type="submit" id="add-sale-submit" class="btn btn-primary col-md-12">Submit</button>
-            </div>
-        </form>
+        </div>
     </div>
 @endsection
